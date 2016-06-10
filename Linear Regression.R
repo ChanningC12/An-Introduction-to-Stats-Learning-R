@@ -70,7 +70,31 @@ summary(lm.fit5)
 # use log
 summary(lm(medv~log(rm),data=Boston))
 
+# Qualitative Predictors
+names(Carseats)
+lm.fit = lm(Sales ~. + Income:Advertising + Price:Age, data = Carseats)
+summary(lm.fit)
+
+# contrasts() function returns the coding that R uses for the dummy variables
+attach(Carseats)
+contrasts(ShelveLoc)
+
+# Exercise
+View(Auto)
+names(Auto)
+str(Auto)
+fit.lm = lm(mpg~as.numeric(horsepower),data=Auto)
+summary(fit.lm)
+predict(fit.lm,data.frame(horsepower=98))
+confint(fit.lm)
+par(mfrow=c(1,1))
+Auto$horsepower_num = as.numeric(Auto$horsepower)
+plot(Auto$horsepower_num,Auto$mpg)
+abline(fit.lm,lwd=3,col="red")
+plot(fit.lm)
 
 
 
 
+
+     
