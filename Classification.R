@@ -65,4 +65,98 @@ lda.class = lda.pred$class
 table(lda.class,Direction.2005)
 mean(lda.class == Direction.2005)
 
+# LDA example in iris
+data(iris)
+head(iris,3)
+dim(iris)
+table(iris$Species)
+tapply(iris$Sepal.Length,iris$Species,mean)
+r = lda(Species~.,data=iris,prior=c(1,1,1)/3) #The prior argument sets the prior probabilities of class membership
+r$prior
+r$counts
+r$means
+r$scaling # linear combination coefficients (scaling)
+r$svd # singular values (svd) that gives the ratio of the between- and within-group standard deviations on the linear discriminant variables
+
+# use the singular values to compute the amount of the between-group variance that is explained by each linear discriminant
+# we see that the first linear discriminant explains more than {99\%} of the between-group variance in the iris dataset
+prop = r$svd^2/sum(r$svd^2)
+prop
+
+# predict
+train = sample(1:150,75)
+r3 = lda(Species~.,iris,prior=c(1,1,1)/3,subset=train)
+plda = predict(object=r,newdata=iris[-train,])
+head(plda$class)
+
+# http://www.r-bloggers.com/computing-and-visualizing-lda-in-r/
+
+# QDA
+train = (Year<2005)
+qda.fit = qda(Direction~Lag1+Lag2,data=Smarket,subset=train)
+qda.fit
+qda.class = predict(qda.fit,Smarket.2005)$class
+table(qda.class,Direction.2005)
+mean(qda.class == Direction.2005)
+
+
+# K-Nearest Neighbors
+library(class)
+train.X = cbind(Lag1,Lag2)[train,]
+test.X = cbind(Lag1,Lag2)[!train,]
+train.Direction=Direction[train]
+set.seed(1)
+knn.pred = knn(train.X,test.X,train.Direction,k=1)
+table(knn.pred,Direction.2005)
+mean(knn.pred==Direction.2005)
+
+# repeat with k=3
+knn.pred = knn(train.X,test.X,train.Direction,k=3)
+table(knn.pred,Direction.2005)
+mean(knn.pred==Direction.2005)
+
+# An Application to Caravan Insurance Data
+dim(Caravan)
+attach(Caravan)
+summary(Purchase)
+# need to scale the KNN predictors, $1,000 and 50 year old
+standardize.X = scale(Caravan[,-86])
+var(Caravan[,1])
+var(Caravan[,2])
+var(standardize.X[,1])
+var(standardize.X[,2])
+
+test = 1:1000
+train.X = standardize.X[-test,]
+test.X = standardize.X[test,]
+train.Y = Purchase[-test]
+test.Y = Purchase[test]
+set.seed(1)
+knn.pred = knn(train.X,test.X,train.Y,k=1)
+mean(test.Y!=knn.pred)
+mean(test.Y!="No")
+table(knn.pred,test.Y)
+
+# k = 3
+knn.pred = knn(train.X,test.X,train.Y,k=3)
+table(knn.pred,test.Y)
+mean(knn.pred == test.Y)
+
+knn.pred = knn(train.X,test.X,train.Y,k=5)
+table(knn.pred,test.Y)
+mean(knn.pred == test.Y)
+
+# Compare to Logistic Regression
+glm.fit = glm(Purchase~.,data=Caravan,family=binomial,subset=-test)
+glm.probs = predict(glm.fit,Caravan[test,],type="response")
+glm.pred = rep("No",1000)
+glm.pred[glm.probs>0.5]="Yes"
+table(glm.pred,test.Y)
+mean(glm.pred == test.Y)
+
+glm.pred = rep("No",1000)
+glm.pred[glm.probs>0.25]="Yes"
+table(glm.pred,test.Y)
+mean(glm.pred == test.Y)
+
 
