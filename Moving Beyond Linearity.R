@@ -8,3 +8,13 @@
 # Local regression: The regions are allowed to overlap
 # GAM: allow us to extend the methods above to deal with multiple predictors
 
+# A cubic spline with K knots uses a total of 4+K degreee of freedom
+# backfitting: fits a model involving multiple predictors by repeatedly updating the fit for each predictor in turn
+
+library(ISLR)
+attach(Wage)
+
+# Polynominal regeression and step functions
+
+fit = lm(wage~poly(age,4),data = Wage)  # poly() command allows us to avoid having to write out a long formula with powers of age
+coef(summary(fit))
