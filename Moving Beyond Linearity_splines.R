@@ -49,3 +49,9 @@ legend("topright",legend=c("Span=0.2", "Span=0.5",col=c("red","blue"),lty=1,lwd=
 
 
 
+
+
+
+
+
+
