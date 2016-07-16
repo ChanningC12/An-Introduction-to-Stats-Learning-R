@@ -66,9 +66,48 @@ abline(0,1)
 mean((yhat-boston.test)^2)
 
 
+# Bagging and Random Forest
+# Bagging is simply a special case of a random forest with m=p
+library(randomForest)
+set.seed(1)
+dim(Boston)
+bag.boston = randomForest(medv~.,data=Boston,subset=train,mtry=13,importance=T)
+bag.boston
+# How well does this bagged model perform on the test set?
+yhat.bag = predict(bag.boston,newdata=Boston[-train,])
+mean((yhat.bag - boston.test)^2)
 
+# Random forest proceeds in exactly the same way, except that we use a smaller value of mtry
+set.seed(1)
+rf.boston = randomForest(medv~.,data=Boston,subset=train,mtry=6,importance = T)
+yhat.rf = predict(rf.boston,newdata=Boston[-train,])
+mean((yhat.rf-boston.test)^2)
+# The MSE is 11.31, this indicates that random forests yielded an improvement over bagging in this case
+# using importance() function, we can view the importance of each variable
+importance(rf.boston)
+# %IncMSE: based upon the mean decrease of accuracy in predictions on the out of bag samples when a given variable is excluded from the model.
+# IncNodePurity: measure of the total decrease in node impurity that results from splits over that variable, averaged over all trees
+varImpPlot(rf.boston)
 
+# Boosting
+# Here we use the gbm package
+library(gbm)
+set.seed(1)
+boost.boston = gbm(medv~.,data=Boston[train,],distribution="gaussian",n.trees=5000,interaction.depth=4) # distribution="bernoulli" if it were a binary classification problem
+summary(boost.boston)
+# partial dependence plots
+par(mfrow=c(1,2))
+plot(boost.boston,i="rm")
+plot(boost.boston,i="lstat")
 
+# boosted model on the test set
+yhat.boost = predict(boost.boston,newdata=Boston[-train,],n.trees=5000)
+mean((yhat.boost-boston.test)^2)
+
+# we can perform boosting with a different value of the shrinkage parameter
+boost.boston = gbm(medv~.,data=Boston[train,],distribution="gaussian",n.trees=5000,interaction.depth=4,shrinkage=0.2,verbose=F)
+yhat.boost = predict(boost.boston,newdata=Boston[-train,],n.trees=5000)
+mean((yhat.boost-boston.test)^2)
 
 
 
