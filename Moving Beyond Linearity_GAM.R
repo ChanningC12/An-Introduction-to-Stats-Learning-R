@@ -7,7 +7,7 @@ gam.m3 = gam(wage~s(year,4)+s(age,5)+education,data=Wage)
 par(mfrow=c(1,3))
 plot.gam(gam.m3,se=TRUE,col="blue")
 plot.gam(gam1,se=TRUE,col="blue")
-# ANOVA to determine which ofthese three models is best: 
+# ANOVA to determine which of these three models is best: 
 # M1: GAM that excludes year
 # M2: GAM that uses a linear function of year
 # M3: GAM that uses a spline function of year

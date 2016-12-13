@@ -25,7 +25,7 @@ summary(pls.fit)
 validationplot(pls.fit)
 pls.pred = predict(pls.fit,x[test,],ncomp=2)
 mean((pls.pred - y.test)^2)
-# perform pls on full dataset
+÷# perform pls on full dataset
 pls.fit = plsr(Salary~.,data=Hitters,scale=T,ncomp=2)
 summary(pls.fit)
 # the percentage of variance in Salary that the two-component PLS fit explains, 46.40%

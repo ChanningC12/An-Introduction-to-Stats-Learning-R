@@ -1,5 +1,6 @@
 # 6.5.2 Forward and Backward Stepwise Selection
 # forward
+library(leaps)
 regfit.fwd = regsubsets(Salary~.,data=Hitters,nvmax=19,method="forward")
 summary(regfit.fwd)
 names(regfit.fwd)
@@ -61,4 +62,4 @@ for (j in 1:k){
 
 mean.cv.errors=apply(cv.errors,1,mean)
 mean.cv.errors
-
+mean.cv.errors[which.min(mean.cv.errors)]

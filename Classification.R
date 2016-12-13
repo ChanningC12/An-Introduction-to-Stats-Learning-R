@@ -20,11 +20,16 @@ summary(glm.fit)
 coef(glm.fit)
 summary(glm.fit$coef)
 
+# output probabilities
 glm.probs = predict(glm.fit,type="response")
+# predict the first ten obs
 glm.probs[1:10]
+# assign predicted variable
 glm.pred = rep("Down",1250)
 glm.pred[glm.probs>0.5] = "Up"
+# cross tab to see predictions against actual
 table(glm.pred,Direction)
+# accuracy
 mean(glm.pred == Direction)
 
 # Train
